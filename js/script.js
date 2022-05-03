@@ -294,46 +294,120 @@ window.addEventListener("DOMContentLoaded", function() {
         prev = document.querySelector(".offer__slider-prev"),
         next = document.querySelector(".offer__slider-next"),
         total = document.querySelector("#total"),
-        current = document.querySelector("#current");
-    let slideIndex = 1;
+        current = document.querySelector("#current"),
+        slidesWrapper = document.querySelector(".offer__slider-wrapper"),
+        slidesField = document.querySelector(".offer__slider-inner"),
+        width = window.getComputedStyle(slidesWrapper).width; // здесь будет число (значение ширины картинки из верстки)
 
-    showSlides(slideIndex);
-
+    let slideIndex = 1, // слайды, картинки
+        offset = 0; // числовое значение над картинками
+    // инициализация обозначения слайдов: если число однозначное, добавляем вначало 0.
     if (slides.length < 10) {
         total.textContent = `0${slides.length}`;
+        current.textContent = `0${slideIndex}`;
     } else {
         total.textContent = slides.length;
+        current.textContent = `0${slideIndex}`;
     }
 
-    function showSlides(n) {
-        if (n > slides.length) {
+    slidesField.style.width = 100 * slides.length + "%"; // делаем так, чтобы все вместе картинки занимали 100% ширины
+    slidesField.style.display = "flex"; // располагаем горизонтально
+    slidesField.style.transition = "0.5s all"; // плавный переход
+
+    slidesWrapper.style.overflow = "hidden"; // в "обертке" скрываем те слайды, которые не должны быть в поле видимости
+
+    slides.forEach((slide) => {
+        slide.style.width = width; // для каждого слайда устанавливаем ширину картинки равную переменной width;
+    });
+    // навешиваем события на стрелки "вперед" и "назад".
+    next.addEventListener("click", () => {
+        if (offset == +width.slice(0, width.length - 2) * (slides.length - 1)) {
+            //  в width сейчас лежит это значение:'500px', убираем с помощью Слайс px;
+            offset = 0; // если слайдер дошел до конца, значение offset возвращается в начало
+        } else {
+            offset += +width.slice(0, width.length - 2); //иначе,  offset = ширина слайда 1 картинки
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`; // перемещение картинок по оси х на ширину слайда.
+        // проверяем значение slideIndex.Если дошли до конца слайдера, значение возвращается в 1, на первую картинку.
+        if (slideIndex == slides.length) {
             slideIndex = 1;
+        } else {
+            slideIndex++;
         }
-
-        if (n < 1) {
-            slideIndex = slides.length;
-        }
-
-        slides.forEach((item) => (item.style.display = "none"));
-
-        slides[slideIndex - 1].style.display = "block";
 
         if (slides.length < 10) {
             current.textContent = `0${slideIndex}`;
         } else {
             current.textContent = slideIndex;
         }
-    }
-
-    function plussSlides(n) {
-        showSlides((slideIndex += n));
-    }
+    });
 
     prev.addEventListener("click", () => {
-        plussSlides(-1);
+        if (offset == 0) {
+            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+        } else {
+            offset -= +width.slice(0, width.length - 2);
+        }
+
+        slidesField.style.transform = `translateX(${offset}px)`;
+
+        if (slideIndex == 1) {
+            slideIndex = slides.length;
+        } else {
+            slideIndex--;
+        }
+
+        if (slides.length < 10) {
+            current.textContent = `0${slideIndex}`;
+        } else {
+            current.textContent = slideIndex;
+        }
     });
 
-    next.addEventListener("click", () => {
-        plussSlides(1);
-    });
+    // вариант 1
+
+    // showSlides(slideIndex);
+    // проверяем, если число слайдов однозначное, добавляем 0 вначало.
+    // if (slides.length < 10) {
+    //     total.textContent = `0${slides.length}`;
+    // } else {
+    //     total.textContent = slides.length;
+    // }
+    // функция показа слайдов.
+    // 1.проверяет, если слайдер дошел до конца, возвращает значение slideIndex в 1.
+    // function showSlides(n) {
+    //     if (n > slides.length) {
+    //         slideIndex = 1;
+    //     }
+
+    //     if (n < 1) {
+    //         slideIndex = slides.length;
+    //     }
+    // 2. скрыть все слайды
+    //     slides.forEach((item) => (item.style.display = "none"));
+
+    // 3. показать текущий слайд (значение slideIndex)
+
+    //     slides[slideIndex - 1].style.display = "block";
+
+    // обновление счетчика
+    //     if (slides.length < 10) {
+    //         current.textContent = `0${slideIndex}`;
+    //     } else {
+    //         current.textContent = slideIndex;
+    //     }
+    // }
+    // "перелистывание"
+    // function plussSlides(n) {
+    //     showSlides((slideIndex += n));
+    // }
+    // обработчики событий на стрелки "вправо" "влево"
+    // prev.addEventListener("click", () => {
+    //     plussSlides(-1);
+    // });
+
+    // next.addEventListener("click", () => {
+    //     plussSlides(1);
+    // });
 });
