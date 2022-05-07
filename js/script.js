@@ -368,13 +368,17 @@ window.addEventListener("DOMContentLoaded", function() {
         dots.push(dot); // добавляем точку в массив dots
     }
 
+    function deleteNotDigits(str) {
+        return +str.replace(/\D/g, "");
+    }
+
     // навешиваем события на стрелки "вперед" и "назад".
     next.addEventListener("click", () => {
-        if (offset == +width.slice(0, width.length - 2) * (slides.length - 1)) {
+        if (offset == deleteNotDigits(width) * (slides.length - 1)) {
             //  в width сейчас лежит это значение:'500px', убираем с помощью Слайс px;
             offset = 0; // если слайдер дошел до конца, значение offset возвращается в начало
         } else {
-            offset += +width.slice(0, width.length - 2); //иначе,  offset = ширина слайда 1 картинки
+            offset += deleteNotDigits(width); //иначе,  offset = ширина слайда 1 картинки
         }
 
         slidesField.style.transform = `translateX(-${offset}px)`; // перемещение картинок по оси х на ширину слайда.
@@ -397,9 +401,9 @@ window.addEventListener("DOMContentLoaded", function() {
 
     prev.addEventListener("click", () => {
         if (offset == 0) {
-            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+            offset = deleteNotDigits(width) * (slides.length - 1);
         } else {
-            offset -= +width.slice(0, width.length - 2);
+            offset -= deleteNotDigits(width);
         }
 
         slidesField.style.transform = `translateX(-${offset}px)`;
@@ -425,7 +429,7 @@ window.addEventListener("DOMContentLoaded", function() {
             const slideTo = e.target.getAttribute("data-slide-to"); // получаем атрибут каждой точки
 
             slideIndex = slideTo; //значение slideIndex становится равным номеру атрибута
-            offset = +width.slice(0, width.length - 2) * (slideTo - 1); // offset = ширина слайда(500) * очередной номер атрибута
+            offset = deleteNotDigits(width) * (slideTo - 1); // offset = ширина слайда(500) * очередной номер атрибута
             slidesField.style.transform = `translateX(-${offset}px)`;
 
             if (slides.length < 10) {
