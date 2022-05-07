@@ -291,6 +291,7 @@ window.addEventListener("DOMContentLoaded", function() {
     // slider
 
     const slides = document.querySelectorAll(".offer__slide"),
+        slider = document.querySelector(".offer__slider"),
         prev = document.querySelector(".offer__slider-prev"),
         next = document.querySelector(".offer__slider-next"),
         total = document.querySelector("#total"),
@@ -319,6 +320,54 @@ window.addEventListener("DOMContentLoaded", function() {
     slides.forEach((slide) => {
         slide.style.width = width; // для каждого слайда устанавливаем ширину картинки равную переменной width;
     });
+
+    slider.style.position = "relative"; // устанавливаем блоку слайдера position: relative. А точкам установим абсолютное позиционирование относительно слайдера.
+
+    // создаем точки под слайдером:
+    const indicators = document.createElement("ol"), // создали список ol
+        dots = [];
+    indicators.classList.add("carousel-indicators"); // присвоили ему класс
+
+    indicators.style.cssText = `
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 15;
+        display: flex;
+        justify-content: center;
+        margin-right: 15%;
+        margin-left: 15%;
+        list-style: none;
+    `; // присвоили классу свойства css
+    slider.append(indicators); // добавили в блок slider
+
+    for (let i = 0; i < slides.length; i++) {
+        const dot = document.createElement("li"); // динамически в цикле создаем список точек
+        dot.setAttribute("data-slide-to", i + 1); //присваиваем им data-атрибуты
+        dot.style.cssText = `
+            box-sizing: content-box;
+            flex: 0 1 auto;
+            width: 30px;
+            height: 6px;
+            margin-right: 3px;
+            margin-left: 3px;
+            cursor: pointer;
+            background-color: #fff;
+            background-clip: padding-box;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            opacity: .5;
+            transition: opacity .6s ease;
+        `;
+        //на первой итерации выделяем первую точку
+        if (i == 0) {
+            dot.style.opacity = 1;
+        }
+        indicators.append(dot);
+        dots.push(dot); // добавляем точку в массив dots
+    }
+
     // навешиваем события на стрелки "вперед" и "назад".
     next.addEventListener("click", () => {
         if (offset == +width.slice(0, width.length - 2) * (slides.length - 1)) {
@@ -341,6 +390,9 @@ window.addEventListener("DOMContentLoaded", function() {
         } else {
             current.textContent = slideIndex;
         }
+
+        dots.forEach((dot) => (dot.style.opacity = ".5"));
+        dots[slideIndex - 1].style.opacity = 1;
     });
 
     prev.addEventListener("click", () => {
@@ -350,7 +402,7 @@ window.addEventListener("DOMContentLoaded", function() {
             offset -= +width.slice(0, width.length - 2);
         }
 
-        slidesField.style.transform = `translateX(${offset}px)`;
+        slidesField.style.transform = `translateX(-${offset}px)`;
 
         if (slideIndex == 1) {
             slideIndex = slides.length;
@@ -363,6 +415,28 @@ window.addEventListener("DOMContentLoaded", function() {
         } else {
             current.textContent = slideIndex;
         }
+        dots.forEach((dot) => (dot.style.opacity = "0.5"));
+        dots[slideIndex - 1].style.opacity = 1;
+    });
+
+    // добавляем функционал точкам
+    dots.forEach((dot) => {
+        dot.addEventListener("click", (e) => {
+            const slideTo = e.target.getAttribute("data-slide-to"); // получаем атрибут каждой точки
+
+            slideIndex = slideTo; //значение slideIndex становится равным номеру атрибута
+            offset = +width.slice(0, width.length - 2) * (slideTo - 1); // offset = ширина слайда(500) * очередной номер атрибута
+            slidesField.style.transform = `translateX(-${offset}px)`;
+
+            if (slides.length < 10) {
+                current.textContent = `0${slideIndex}`;
+            } else {
+                current.textContent = slideIndex;
+            }
+
+            dots.forEach((dot) => (dot.style.opacity = "0.5"));
+            dots[slideIndex - 1].style.opacity = 1;
+        });
     });
 
     // вариант 1
