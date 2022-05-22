@@ -1,7 +1,7 @@
 function calc() {
     // calculator
 
-    const result = document.querySelector(".calculating__result span"); // поле с результатом подсчета
+    const result = document.querySelector(".calculating__result span"); // поле с результатом подсчета(обращаемся к классу и внутри него span)
 
     let sex, height, weigth, age, ratio; // объявляем переменные нижней плашки
 
@@ -10,7 +10,7 @@ function calc() {
         sex = localStorage.getItem("sex");
     } else {
         sex = "female";
-        localStorage.setItem("sex", "female"); // устанавливаем значение по умолчанию, записываем в local storage
+        localStorage.setItem("sex", "female"); // устанавливаем значение по умолчанию, записываем в local storage("ключ", "занчение")
     }
 
     // помещаем значение из local storage в переменную ratio
@@ -47,42 +47,41 @@ function calc() {
         "calculating__choose-item_active"
     ); // вызываем для нижней плашки
 
-    // вычисляет количество каллорий по формуле
+    // вычисляет количество каллорий по формуле(конечный результат)
     function calcTotal() {
         if (!sex || !height || !weigth || !age || !ratio) {
             result.textContent = "____";
-            return; // функция дальше не пойдет
+            return; // чтобы досрочно прервать функцию
         } // если какое-либо значение в инпут не будет введено, вычисления не произведутся
         // в переменных в if попадают числа. Если это не число, а строка, результат - false
-
         if (sex === "female") {
             result.textContent = Math.round(
                 (447.6 + 9.2 * weigth + 3.1 * height - 4.3 * age) * ratio
-            );
+            ); // вычисляем результат по формуле, округляем значение до ближайшего целого
         } else {
             result.textContent = Math.round(
                 (88.36 + 13.4 * weigth + 4.8 * height - 5.7 * age) * ratio
-            );
+            ); // суточная норма каллорий для мужчины
         }
     }
 
     calcTotal();
 
-    // получать статическую информацию.
+    // получать статическую информацию
     function getStaticInformation(selector, activeClass) {
-        const elements = document.querySelectorAll(selector);
-
+        const elements = document.querySelectorAll(selector); // selector - это верхнее или нижнее поле, передается в качестве аргумента функции
+        // если элемент, на который кликнули имеет data-атрибут, это будет одна из нижних плашек (ratio)
+        // если data-атрибута нет, то работает условие else, поллучаем пол (значение id из верстки).
         elements.forEach((elem) => {
             elem.addEventListener("click", (e) => {
-                //обращаемся сначала к data-ratio. Если такой атрибут есть, записываем его в переменную ratio
                 if (e.target.getAttribute("data-ratio")) {
-                    ratio = +e.target.getAttribute("data-ratio"); //записываем его в переменную ratio
+                    ratio = +e.target.getAttribute("data-ratio"); // записываем значение "data-ratio"в переменную ratio
                     localStorage.setItem("ratio", +e.target.getAttribute("data-ratio")); // устанавливаем в local storage значение ratio
                 } else {
-                    sex = e.target.getAttribute("id");
+                    sex = e.target.getAttribute("id"); // получаем значение id
                     localStorage.setItem("sex", e.target.getAttribute("id")); // помещаем значение в local storage
                 }
-
+                //добавляем или убираем класс активности (зеленый)
                 elements.forEach((elem) => {
                     elem.classList.remove(activeClass);
                 });
@@ -133,4 +132,4 @@ function calc() {
     getDynamicInformation("#age");
 }
 
-module.exports = calc;
+export default calc;

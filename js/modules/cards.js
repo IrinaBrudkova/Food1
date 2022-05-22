@@ -1,15 +1,13 @@
 function cards() {
-    // используем классы для карточек
-
     class CardMenu {
         constructor(src, alt, title, descr, price, parentSelector, ...classes) {
-            this.src = src;
+            this.src = src; // картинка
             this.alt = alt;
-            this.title = title;
-            this.descr = descr;
+            this.title = title; // название карточки
+            this.descr = descr; // описание карточки
             this.price = price;
-            this.classes = classes || ["menu__item"];
-            this.parent = document.querySelector(parentSelector);
+            this.classes = classes || ["menu__item"]; // массив, из возможных элементов
+            this.parent = document.querySelector(parentSelector); // DOM элемент
             this.rate = 80;
             this.convertToRub();
         }
@@ -18,14 +16,19 @@ function cards() {
             this.price = this.price * this.rate;
         }
 
+        // динамически сформировать структуру карточки
         render() {
-            const element = document.createElement("div");
+            const element = document.createElement("div"); // создаем div
+
+            // если ни один элемент не передан в rest-оператор
             if (this.classes.length == 0) {
-                this.element = "menu__item";
-                element.classList.add(this.element);
+                this.element = "menu__item"; // дефолтный класс
+                element.classList.add(this.element); // добавляем класс ". menu___item"
             } else {
                 this.classes.forEach((className) => element.classList.add(className));
             }
+
+            // добавляем верстку в div
             element.innerHTML = `
                 <img src=${this.src} alt=${this.alt}>
                 <h3 class="menu__item-subtitle">${this.title}</h3>
@@ -36,10 +39,11 @@ function cards() {
                     <div class="menu__item-total"><span>${this.price}</span> руб/день</div>
                 <div>
             `;
-            this.parent.append(element);
+            this.parent.append(element); // добавляем div на страницу
         }
     }
 
+    // используем метод "на месте", не добавляя его в переменную, вызываем функцию
     new CardMenu(
         "img/tabs/vegy.jpg",
         "vegy",
@@ -68,4 +72,4 @@ function cards() {
     ).render();
 }
 
-module.exports = cards;
+export default cards;

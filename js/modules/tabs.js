@@ -1,12 +1,13 @@
 function tabs() {
-    // tabs
+    // Tabs
 
-    const tabContent = document.querySelectorAll(".tabcontent"),
-        tabParent = document.querySelector(".tabheader__items"),
-        tabs = document.querySelectorAll(".tabheader__item");
+    let tabs = document.querySelectorAll(".tabheader__item"), // влкладки-названия
+        tabsContent = document.querySelectorAll(".tabcontent"), // контент-блоки
+        tabsParent = document.querySelector(".tabheader__items"); // поле родителя с вкладками
 
+    // создаем функцию, которая будет скрывать все табы
     function hideTabContent() {
-        tabContent.forEach((item) => {
+        tabsContent.forEach((item) => {
             item.classList.add("hide");
             item.classList.remove("show", "fade");
         });
@@ -15,14 +16,19 @@ function tabs() {
             item.classList.remove("tabheader__item_active");
         });
     }
+    hideTabContent();
 
+    // функция, которая будет показывать табы
     function showTabContent(i = 0) {
-        tabContent[i].classList.add("show", "fade");
-        tabContent[i].classList.remove("hide");
-        tabs[i].classList.add("tabheader__item_active");
+        tabsContent[i].classList.add("show", "fade");
+        tabsContent[i].classList.remove("hide");
+        tabs[i].classList.add("tabheader__item_active"); // добавляем класс активности
     }
 
-    tabParent.addEventListener("click", (event) => {
+    hideTabContent();
+    showTabContent();
+
+    tabsParent.addEventListener("click", (event) => {
         const target = event.target;
         if (target && target.classList.contains("tabheader__item")) {
             tabs.forEach((item, i) => {
@@ -35,4 +41,4 @@ function tabs() {
     });
 }
 
-module.exports = tabs;
+export default tabs;
