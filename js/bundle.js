@@ -15,7 +15,7 @@ __webpack_require__.r(__webpack_exports__);
 function calc() {
     // calculator
 
-    const result = document.querySelector(".calculating__result span"); // поле с результатом подсчета
+    const result = document.querySelector(".calculating__result span"); // поле с результатом подсчета(обращаемся к классу и внутри него span)
 
     let sex, height, weigth, age, ratio; // объявляем переменные нижней плашки
 
@@ -24,7 +24,7 @@ function calc() {
         sex = localStorage.getItem("sex");
     } else {
         sex = "female";
-        localStorage.setItem("sex", "female"); // устанавливаем значение по умолчанию, записываем в local storage
+        localStorage.setItem("sex", "female"); // устанавливаем значение по умолчанию, записываем в local storage("ключ", "занчение")
     }
 
     // помещаем значение из local storage в переменную ratio
@@ -61,42 +61,41 @@ function calc() {
         "calculating__choose-item_active"
     ); // вызываем для нижней плашки
 
-    // вычисляет количество каллорий по формуле
+    // вычисляет количество каллорий по формуле(конечный результат)
     function calcTotal() {
         if (!sex || !height || !weigth || !age || !ratio) {
             result.textContent = "____";
-            return; // функция дальше не пойдет
+            return; // чтобы досрочно прервать функцию
         } // если какое-либо значение в инпут не будет введено, вычисления не произведутся
         // в переменных в if попадают числа. Если это не число, а строка, результат - false
-
         if (sex === "female") {
             result.textContent = Math.round(
                 (447.6 + 9.2 * weigth + 3.1 * height - 4.3 * age) * ratio
-            );
+            ); // вычисляем результат по формуле, округляем значение до ближайшего целого
         } else {
             result.textContent = Math.round(
                 (88.36 + 13.4 * weigth + 4.8 * height - 5.7 * age) * ratio
-            );
+            ); // суточная норма каллорий для мужчины
         }
     }
 
     calcTotal();
 
-    // получать статическую информацию.
+    // получать статическую информацию
     function getStaticInformation(selector, activeClass) {
-        const elements = document.querySelectorAll(selector);
-
+        const elements = document.querySelectorAll(selector); // selector - это верхнее или нижнее поле, передается в качестве аргумента функции
+        // если элемент, на который кликнули имеет data-атрибут, это будет одна из нижних плашек (ratio)
+        // если data-атрибута нет, то работает условие else, поллучаем пол (значение id из верстки).
         elements.forEach((elem) => {
             elem.addEventListener("click", (e) => {
-                //обращаемся сначала к data-ratio. Если такой атрибут есть, записываем его в переменную ratio
                 if (e.target.getAttribute("data-ratio")) {
-                    ratio = +e.target.getAttribute("data-ratio"); //записываем его в переменную ratio
+                    ratio = +e.target.getAttribute("data-ratio"); // записываем значение "data-ratio"в переменную ratio
                     localStorage.setItem("ratio", +e.target.getAttribute("data-ratio")); // устанавливаем в local storage значение ratio
                 } else {
-                    sex = e.target.getAttribute("id");
+                    sex = e.target.getAttribute("id"); // получаем значение id
                     localStorage.setItem("sex", e.target.getAttribute("id")); // помещаем значение в local storage
                 }
-
+                //добавляем или убираем класс активности (зеленый)
                 elements.forEach((elem) => {
                     elem.classList.remove(activeClass);
                 });
@@ -162,17 +161,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 function cards() {
-    // используем классы для карточек
-
     class CardMenu {
         constructor(src, alt, title, descr, price, parentSelector, ...classes) {
-            this.src = src;
+            this.src = src; // картинка
             this.alt = alt;
-            this.title = title;
-            this.descr = descr;
+            this.title = title; // название карточки
+            this.descr = descr; // описание карточки
             this.price = price;
-            this.classes = classes || ["menu__item"];
-            this.parent = document.querySelector(parentSelector);
+            this.classes = classes || ["menu__item"]; // массив, из возможных элементов
+            this.parent = document.querySelector(parentSelector); // DOM элемент
             this.rate = 80;
             this.convertToRub();
         }
@@ -181,14 +178,19 @@ function cards() {
             this.price = this.price * this.rate;
         }
 
+        // динамически сформировать структуру карточки
         render() {
-            const element = document.createElement("div");
+            const element = document.createElement("div"); // создаем div
+
+            // если ни один элемент не передан в rest-оператор
             if (this.classes.length == 0) {
-                this.element = "menu__item";
-                element.classList.add(this.element);
+                this.element = "menu__item"; // дефолтный класс
+                element.classList.add(this.element); // добавляем класс ". menu___item"
             } else {
                 this.classes.forEach((className) => element.classList.add(className));
             }
+
+            // добавляем верстку в div
             element.innerHTML = `
                 <img src=${this.src} alt=${this.alt}>
                 <h3 class="menu__item-subtitle">${this.title}</h3>
@@ -199,10 +201,11 @@ function cards() {
                     <div class="menu__item-total"><span>${this.price}</span> руб/день</div>
                 <div>
             `;
-            this.parent.append(element);
+            this.parent.append(element); // добавляем div на страницу
         }
     }
 
+    // используем метод "на месте", не добавляя его в переменную, вызываем функцию
     new CardMenu(
         "img/tabs/vegy.jpg",
         "vegy",
@@ -347,14 +350,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   "openModal": () => (/* binding */ openModal)
 /* harmony export */ });
+// закрытие модального окна описывает сам процесс, обработчик события клика будет дальше
 function closeModal(modalSelector) {
     const modal = document.querySelector(modalSelector);
 
     modal.classList.add("hide");
     modal.classList.remove("show");
+    // добавляем стиль overflow для всего body, чтобы страница не прокручивалась, когда открыто модальное окно
     document.body.style.overflow = "";
 }
 
+//открытие модального окна также только октрытие путем добавленияф/удаления классов
 function openModal(modalSelector, modalTimerId) {
     const modal = document.querySelector(modalSelector);
 
@@ -368,34 +374,46 @@ function openModal(modalSelector, modalTimerId) {
 }
 
 function modal(triggerSelector, modalSelector, modalTimerId) {
-    const modalTrigger = document.querySelectorAll(triggerSelector),
-        modal = document.querySelector(modalSelector);
+    const modalTrigger = document.querySelectorAll(triggerSelector), // кнопки
+        modal = document.querySelector(modalSelector); // само модальное окно
 
+    //приеняем функцию открытия окна к каждой кнопке на странице
     modalTrigger.forEach((btn) => {
         btn.addEventListener("click", () => openModal(modalSelector, modalTimerId));
     });
 
+    // если кликнуть на подложку в любом месте, модальное окно закрывается
+    // если e.target будет совпадать с modal, окно закрывается
     modal.addEventListener("click", (e) => {
         if (e.target === modal || e.target.getAttribute("data-close") == "") {
             closeModal(modalSelector);
         }
     });
 
+    //событие keydown срабатывает тогдаа, когда нажимается кнопка на клавиатуре
+    //code - св-во отслеживает код клавиши.
+    //если срабатывает клавиша esc и модальное окно открыто, срабатывает условия
     document.addEventListener("keydown", (e) => {
         if (e.code === "Escape" && modal.classList.contains("show")) {
             closeModal(modalSelector);
         }
     });
 
+    //открытие модального окна, когда пользователь долистал до конца страницы
+    //scrollHeight - полная высота видимой части страницы
+    //pageYOffset - отслеживает, сколько px отлистал ппользователь до конца страницы
     function showModalByScroll() {
         if (
             window.pageYOffset + document.documentElement.clientHeight >=
-            document.documentElement.scrollHeight
+            document.documentElement.scrollHeight - 1
         ) {
             openModal(modalSelector, modalTimerId);
+            //убираем обработчик события, внутрь помещаем ссылку на функцию и событие, которое нужно удалить
             window.removeEventListener("scroll", showModalByScroll);
         }
     }
+
+    //вызвать функцию открытия окна по событию scroll
     window.addEventListener("scroll", showModalByScroll);
 }
 
@@ -689,15 +707,16 @@ __webpack_require__.r(__webpack_exports__);
 function timer() {
     //timer
 
-    const deadLine = "2022-06-30";
+    const deadLine = "2022-06-30"; // может приходить из разных источников
 
     function getTimeRemaning(endtime) {
-        const t = Date.parse(endtime) - Date.parse(new Date()),
-            days = Math.floor(t / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((t / (1000 * 60 * 60)) % 24),
-            minutes = Math.floor((t / (1000 * 60)) % 60),
+        const t = Date.parse(endtime) - Date.parse(new Date()), //таймстамп оставшегося времени, t = разница между датами в количестве миллисекунд
+            days = Math.floor(t / (1000 * 60 * 60 * 24)), // математически переводим в колиичество дней(вссего млс/(млс в минуте * млсек в часе* млсек в дне)
+            hours = Math.floor((t / (1000 * 60 * 60)) % 24), // получаем хвостик от целых суток
+            minutes = Math.floor((t / (1000 * 60)) % 60), // получаем хвостик от  часа
             seconds = Math.floor((t / 1000) % 60);
 
+        // возвращаем объект
         return {
             days,
             hours,
@@ -706,6 +725,7 @@ function timer() {
         };
     }
 
+    // подставляем 0 перед однозначными числами
     function getZero(num) {
         if (num >= 0 && num < 10) {
             return `0${num}`;
@@ -714,24 +734,28 @@ function timer() {
         }
     }
 
+    // функция, которая устанавливает таймер на страницу,принимает в себя селектор(timer) из верстки, второй - дедлайн
     function setClock(selector, endtime) {
         const timer = document.querySelector(selector),
             days = timer.querySelector("#days"),
             hours = timer.querySelector("#hours"),
             minutes = timer.querySelector("#minutes"),
             seconds = timer.querySelector("#seconds"),
-            timeInterval = setInterval(updateClock, 1000);
+            timeInterval = setInterval(updateClock, 1000); // чтобы таймер запускался каждую секунду
 
-        updateClock();
+        updateClock(); // чтобы таймер запускался ссразу, а не через секунду.
 
+        // обновление часов
         function updateClock() {
-            const t = getTimeRemaning(endtime);
+            const t = getTimeRemaning(endtime); // вернет объект с данными
 
-            days.innerHTML = getZero(t.days);
+            // поместить расчетные величины на страницу
+            days.innerHTML = getZero(t.days); // получаем из объекта ключ days
             hours.innerHTML = getZero(t.hours);
             minutes.innerHTML = getZero(t.minutes);
             seconds.innerHTML = getZero(t.seconds);
 
+            //условие для остановки таймера (если время рано или меньше планируемой даты, очищаем таймер)
             if (t.total <= 0) {
                 clearInterval(timeInterval);
             }
@@ -826,6 +850,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+//Событие DOMContentLoaded происходит когда весь HTML был полностью загружен, не дожидаясь окончания загрузки таблиц стилей, изображений и фреймов.
 window.addEventListener("DOMContentLoaded", function() {
     const modalTimerId = setTimeout(
         () => (0,_modules_modal__WEBPACK_IMPORTED_MODULE_1__.openModal)(".modal", modalTimerId),
